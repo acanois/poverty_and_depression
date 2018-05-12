@@ -14,35 +14,50 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
 
     var xScale = d3.scaleLinear()
                    .domain([
-                       d3.min([0, d3.min(depressionData, d => { return d.percentDepressed })]),
-                       d3.max([0, d3.max(depressionData, d => { return d.percentDepressed })])
+                       d3.min([0, d3.min(depressionData, d => { return d.belowPoverty })]),
+                    //    d3.max([0, d3.max(depressionData, d => { return d.belowPoverty})])
+                    48
                    ])
                    .range([0, width])
+    console.log(d3.min([0, d3.min(depressionData, d => { return d.belowPoverty})]))
+    console.log(d3.max([0, d3.max(depressionData, d => { return d.belowPoverty})]))
+    
     var yScale = d3.scaleLinear()
-                   .domain([
-                       d3.min([0, d3.min(depressionData, d => { return d.belowPoverty })]),
-                       d3.max([0, d3.max(depressionData, d => { return d.belowPoverty })])
+                   .domain([ 0, 30
+                    //    d3.min([0, d3.min(depressionData, d => { return d.percentDepressed })]),
+                    //    d3.max([0, d3.max(depressionData, d => { return d.percentDepressed })])
                    ])
                    .range([height, 0])
+
     // SVG
     var svg = body.append('svg')
                 .attr('height', height + margin.top + margin.bottom)
                 .attr('width', width + margin.left + margin.right)
                 .append('g')
-                .attr('transform','translate(' + margin.left + ',' + margin.top + ')')
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+
+
     // X-axis
     var xAxis = d3.axisBottom()
                 .scale(xScale)
+
     // Y-axis
     var yAxis = d3.axisLeft()
-                    .scale(yScale)
+                .scale(yScale)
+                
     // Circles
-    var circles = svg.selectAll('circle')
+    var circlesGroup = svg.selectAll('circle')
                     .data(depressionData)
                     .enter()
                     .append('circle')
-                    .attr('cx',function (d) { return xScale(d.belowPoverty/5) })
-                    .attr('cy',function (d) { return yScale(d.percentDepressed/5) })
+                    .attr('cx',function (d) { 
+                        console.log(`poverty: ${d.belowPoverty}`)
+                        return xScale(d.belowPoverty) 
+                    })
+                    .attr('cy',function (d) { 
+                        console.log(`depression: ${d.percentDepressed}`)
+                        return yScale(d.percentDepressed) 
+                    })
                     .attr('r','5')
                     .attr('stroke-width',1)
                     .attr('fill', 'blue')
@@ -54,14 +69,29 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
                         .attr('r', 20)
                         .attr('stroke-width', 3)
                     })
-    .on('mouseout', function () {
-    d3.select(this)
-        .transition()
-        .duration(500)
-        .attr('r', 5)
-        .attr('stroke-width',1)
+                    .on('mouseout', function () {
+                    d3.select(this)
+                        .transition()
+                        .duration(500)
+                        .attr('r', 5)
+                        .attr('stroke-width',1)
+                    })
+    
+    var toolTip = d3.select('body').append('div').attr('class', 'tooltip')
+    var createToolTip = function () {
+        return d3.select('body').append('div').attr('class', 'tooltip')
+    }
+
+    circlesGroup.on('mouseover', (d, i) => {
+        var newToolTip = createToolTip()
+        newToolTip.style('display', 'block')
+        newToolTip.html('<p>Test</p>')
+                  .style("left", d3.event.pageX + "px")
+                  .style("top", d3.event.pageY + "px");
     })
-    .append('title') // Tooltip
+    .on('mouseout', () => {
+        toolTip.style('opacity', 0)
+    })
     
     // X-axis
     svg.append('g')
@@ -70,10 +100,9 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
         .call(xAxis)
         .append('text') // X-axis Label
         .attr('class','label')
-        .attr('y',-10)
+        .attr('y', -10)
         .attr('x', width)
-        .attr('dy','.71em')
-        .style('text-anchor','end')
+
     // Y-axis
     svg.append('g')
         .attr('class', 'axis')
@@ -83,6 +112,4 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
         .attr('transform','rotate(-90)')
         .attr('x',0)
         .attr('y',5)
-        .attr('dy','.71em')
-        .style('text-anchor','end')
-        })
+})
