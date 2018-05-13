@@ -7,10 +7,17 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
     if (err) console.log(err)
 
     // Set up the canvas
-    const body = d3.select('body')
     const margin = {top: 20, right: 20, bottom: 30, left: 40}
     const width = 960 - margin.left - margin.right
     const height = 500 - margin.top - margin.bottom
+
+    // SVG
+    const svg = d3.select('.chart')
+                .append('svg')
+                .attr('height', height + margin.top + margin.bottom)
+                .attr('width', width + margin.left + margin.right)
+                .append('g')
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
     const xScale = d3.scaleLinear()
         .range([0, width])
@@ -23,21 +30,10 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
                    ])
                    .range([height, 0])
 
-    // SVG
-    const svg = body.append('svg')
-                .attr('height', height + margin.top + margin.bottom)
-                .attr('width', width + margin.left + margin.right)
-                .append('g')
-                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-
-
     // X-axis
-    const xAxis = d3.axisBottom()
-                .scale(xScale)
-
+    const xAxis = d3.axisBottom(xScale)
     // Y-axis
-    const yAxis = d3.axisLeft()
-                .scale(yScale)
+    const yAxis = d3.axisLeft(yScale)
                 
     // Circles
     const circlesGroup = svg.selectAll('circle')
@@ -49,7 +45,6 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
                         return xScale(d.belowPoverty) 
                     })
                     .attr('cy',function (d) { 
-                        console.log(`depression: ${d.percentDepressed}`)
                         return yScale(d.percentDepressed) 
                     })
                     .attr('r','5')
@@ -62,14 +57,14 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
         return d3.select('body').append('div').attr('class', 'tooltip')
     }
 
-    circlesGroup.on('mouseover', (d, i) => {
+    circlesGroup.on('mouseover', function (d, i) {
         const newToolTip = createToolTip()
         newToolTip.style('display', 'block')
         newToolTip.html('<p>Test</p>')
                   .style("left", d3.event.pageX + "px")
                   .style("top", d3.event.pageY + "px");
     })
-    .on('mouseout', () => {
+    .on('mouseout',  function () {
         toolTip.style('opacity', 0)
     })
     
