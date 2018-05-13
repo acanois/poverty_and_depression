@@ -8,14 +8,14 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
 
   // Set up the canvas
   var margin = {
-    top: 20,
+    top: 40,
     right: 20,
-    bottom: 30,
+    bottom: 100,
     left: 40
   }
 
   var width = 960 - margin.left - margin.right
-  var height = 500 - margin.top - margin.bottom
+  var height = 560 - margin.top - margin.bottom
 
   // SVG
   var svg = d3.select('.chart')
@@ -25,9 +25,13 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
     .append('g')
     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
+  var chartGroup = svg.append('g')
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
   var xScale = d3.scaleLinear()
     .range([0, width])
-    .domain(d3.extent(depressionData, d => d.percentDepressed)).nice()
+    .domain([5, 50])
+    // .domain(d3.extent(depressionData, d => d.percentDepressed)).nice()
 
   var yScale = d3.scaleLinear()
     .range([height, 0])
@@ -38,18 +42,24 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
   // Y-axis
   var yAxis = d3.axisLeft(yScale)
 
+  chartGroup.append('g')
+    .call(xAxis)
+    .attr('transform', `translate(0, ${height})`)
+  chartGroup.append('g')
+    .call(yAxis)
+
   // Circles
-  var circlesGroup = svg.selectAll('circle')
+  var circlesGroup = chartGroup.selectAll('circle')
     .data(depressionData)
     .enter()
     .append('circle')
     .attr('cx', d => xScale(d.belowPoverty))
     .attr('cy', d => yScale(d.percentDepressed))
-    .attr('r', '8')
+    .attr('r', '5')
     .attr('fill', 'blue')
     .attr('opacity', 0.75)
 
-  var toolTip = d3.select(".chart")
+  var toolTip = d3.select("body")
     .append("div")
     .style("display", "none")
     .classed('tooltip', true)
@@ -64,27 +74,21 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
         .style('left', d3.event.pageX + 'px')
         .style('top', d3.event.pageY + 'py')
     })
-    .on('mouseout', function() {
+    .on('mouseout', function(d) {
       toolTip.style('display', 'none')
     })
 
-  // X-axis
-  svg.append('g')
-    .attr('class', 'axis')
-    .attr('transform', 'translate(0,' + height + ')')
-    .call(xAxis)
-    .append('text') // X-axis Label
-    .attr('class', 'label')
-    .attr('y', -10)
-    .attr('x', width)
+  chartGroup.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left - 5)
+    .attr("x", 0 - (height / 2))
+    .attr("dy", "1em")
+    .attr("class", "axisText")
+    .text("Depression Rate");
 
-  // Y-axis
-  svg.append('g')
-    .attr('class', 'axis')
-    .call(yAxis)
-    .append('text') // y-axis Label
-    .attr('class', 'label')
-    .attr('transform', 'rotate(-90)')
-    .attr('x', 0)
-    .attr('y', 5)
+  chartGroup.append("text")
+    .attr("transform", `translate(${width/2}, ${height + 40})`)
+    .attr("class", "axisText")
+    .attr('dx', '1em')
+    .text("Percentage Below Poverty Level");
 })

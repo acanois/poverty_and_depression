@@ -1,6 +1,18 @@
 /* Students:
  * =========
  * Add styling to your d3 chart with this file. */
+.chart {
+  width: 960px;
+  height: 500px;
+}
+
+.axisText {
+  font-family: sans-serif;
+  font-weight: bold;
+  fill: black;
+  text-anchor: middle;
+}
+
 .tooltip {
   display: none;
   position: absolute;
