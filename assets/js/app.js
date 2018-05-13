@@ -7,7 +7,13 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
     if (err) console.log(err)
 
     // Set up the canvas
-    const margin = {top: 20, right: 20, bottom: 30, left: 40}
+    const margin = {
+        top: 20, 
+        right: 20, 
+        bottom: 30, 
+        left: 40
+    }
+    
     const width = 960 - margin.left - margin.right
     const height = 500 - margin.top - margin.bottom
 
@@ -22,13 +28,10 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
     const xScale = d3.scaleLinear()
         .range([0, width])
         .domain(d3.extent(depressionData, d => d.percentDepressed)).nice()
-    
+
     const yScale = d3.scaleLinear()
-                   .domain([ //0, 30
-                       d3.min([0, d3.min(depressionData, d => { return d.percentDepressed })]),
-                       d3.max([0, d3.max(depressionData, d => { return d.percentDepressed })])
-                   ])
-                   .range([height, 0])
+        .range([height, 0])
+        .domain(d3.extent(depressionData, d => d.percentDepressed)).nice()
 
     // X-axis
     const xAxis = d3.axisBottom(xScale)
@@ -40,33 +43,43 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
                     .data(depressionData)
                     .enter()
                     .append('circle')
-                    .attr('cx',function (d) { 
-                        console.log(`poverty: ${d.belowPoverty}`)
-                        return xScale(d.belowPoverty) 
-                    })
-                    .attr('cy',function (d) { 
-                        return yScale(d.percentDepressed) 
-                    })
+                    .attr('cx', d => xScale(d.belowPoverty))
+                    .attr('cy', d => yScale(d.percentDepressed)) 
                     .attr('r','5')
                     .attr('stroke-width',1)
                     .attr('fill', 'blue')
                     .attr('opacity', 0.75)
-    
-    const toolTip = d3.select('body').append('div').attr('class', 'tooltip')
-    const createToolTip = function () {
-        return d3.select('body').append('div').attr('class', 'tooltip')
-    }
 
-    circlesGroup.on('mouseover', function (d, i) {
-        const newToolTip = createToolTip()
-        newToolTip.style('display', 'block')
-        newToolTip.html('<p>Test</p>')
-                  .style("left", d3.event.pageX + "px")
-                  .style("top", d3.event.pageY + "px");
-    })
-    .on('mouseout',  function () {
-        toolTip.style('opacity', 0)
-    })
+    var toolTip = d3.select('.chart')
+        .append('div')
+        .style('display', 'none')
+        .classed('tooltip', true)
+
+    circlesGroup.on('mouseover', function (d) {
+        toolTip.style('display', 'block')
+            .html(`<p>Test</p>`)
+            .style('left', d3.event.pageX + 'px')
+            .style('top', d3.event.pageY + 'py')
+        })
+        .on('moueout', function () {
+            toolTip.style('display', 'none')
+        })
+    
+    // const toolTip = d3.select('body').append('div').attr('class', 'tooltip')
+    // const createToolTip = function () {
+    //     return d3.select('body').append('div').attr('class', 'tooltip')
+    // }
+
+    // circlesGroup.on('mouseover', function (d, i) {
+    //     const newToolTip = createToolTip()
+    //     newToolTip.style('display', 'block')
+    //     newToolTip.html('<p>Test</p>')
+    //               .style("left", d3.event.pageX + "px")
+    //               .style("top", d3.event.pageY + "px");
+    // })
+    // .on('mouseout',  function (d, i) {
+    //     toolTip.hide(d)
+    // })
     
     // X-axis
     svg.append('g')
