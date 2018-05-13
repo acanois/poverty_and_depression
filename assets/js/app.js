@@ -49,7 +49,7 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
     .attr('fill', 'blue')
     .attr('opacity', 0.75)
 
-  var toolTip = d3.select("body")
+  var toolTip = d3.select(".chart")
     .append("div")
     .style("display", "none")
     .classed('tooltip', true)
@@ -59,6 +59,7 @@ d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
         .html(`
           <p>${d.state}:</p>
           <p>Below Poverty: ${d.belowPoverty}%</p>
+          <p>Depression Rate: ${d.percentDepressed}%</p>
           `)
         .style('left', d3.event.pageX + 'px')
         .style('top', d3.event.pageY + 'py')

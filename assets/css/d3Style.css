@@ -1,3 +1,16 @@
 /* Students:
  * =========
  * Add styling to your d3 chart with this file. */
+.tooltip {
+  display: none;
+  position: absolute;
+  width: 200px;
+  height: 150px;
+  padding: 2px;
+  font: 12px sans-serif;
+  text-align: left;
+  background: #33AA11;
+  border: 0;
+  border-radius: 10px;
+  color: white;
+}
