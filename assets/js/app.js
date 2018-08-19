@@ -1,8 +1,3 @@
-// D3 Scatterplot Assignment
-
-// Students:
-// =========
-// Follow your written instructions and create a scatter plot with D3.js.
 d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
   if (err) console.log(err)
 
