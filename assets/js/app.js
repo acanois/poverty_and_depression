@@ -1,4 +1,10 @@
-  d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
+/* 
+Economic Status and Depression
+Author: David Richter
+Year:   2018
+*/
+
+d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
     if (err) console.log(err)
 
     // Set up the canvas
@@ -26,12 +32,10 @@
     const xScale = d3.scaleLinear()
       .range([0, width])
       .domain([5, 50])
-      //.domain(d3.extent(depressionData, d => d.percentDepressed)).nice()
 
     const yScale = d3.scaleLinear()
       .range([height, 0])
       .domain([10, 26])
-      // .domain(d3.extent(depressionData, d => d.percentDepressed)).nice()
 
     // X-axis
     const xAxis = d3.axisBottom(xScale)
