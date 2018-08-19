@@ -1,7 +1,16 @@
   d3.csv('../../data/poverty_depression.csv', (err, depressionData) => {
     if (err) console.log(err)
 
+    // Set up the canvas
+    const margin = {
+      top: 40,
+      right: 20,
+      bottom: 100,
+      left: 40
+    }
 
+    const width = 960 - margin.left - margin.right
+    const height = 560 - margin.top - margin.bottom
 
     // SVG
     const svg = d3.select('.chart')
@@ -80,16 +89,3 @@
       .attr('dx', '1em')
       .text("Percentage Below Poverty Level");
 })
-
-function setupCanvas () {
-  // Set up the canvas
-  const margin = {
-    top: 40,
-    right: 20,
-    bottom: 100,
-    left: 40
-  }
-
-  const width = 960 - margin.left - margin.right
-  const height = 560 - margin.top - margin.bottom
-}
